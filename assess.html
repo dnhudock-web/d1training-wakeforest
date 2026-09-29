@@ -201,7 +201,7 @@ body.tw.scho .no-twscho{display:none!important}
 .done-screen p{color:#cfcfcf;max-width:52ch;margin:0}
 .mock{font-size:13px;color:var(--muted);border:1px dashed #444;border-radius:6px;padding:10px 12px;max-width:60ch}
 /* ---------- report overlay + paper (print documents stay light) ---------- */
-.ov{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.86);display:flex;flex-direction:column}
+.ov{position:fixed;inset:0;z-index:40;overflow:auto;background:rgba(0,0,0,.86);display:flex;flex-direction:column}
 .ovbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-block:calc(12px + env(safe-area-inset-top,0px)) 12px;background:#0c0c0c;border-bottom:1px solid #222;max-width:none}
 .ovbar h3{font-family:var(--display);font-weight:700;font-size:20px;text-transform:uppercase;margin:0}
 .ovscroll{flex:1;overflow:auto;padding:20px 16px calc(40px + env(safe-area-inset-bottom,0px))}
@@ -523,13 +523,18 @@ body.tw.scho .no-twscho{display:none!important}
   <div class="ok"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L19 7"/></svg></div>
   <h1 id="doneTitle">Assessment Saved</h1>
   <p id="doneText"></p>
-  <div class="mock">Mockup: in the live version this writes one row to the Assessment Log Google Sheet. Tap a report to preview the PDF and send it from d1wakeforest@d1training.com.</div>
+  <div class="mock" id="mockNote">Mockup: in the live version this writes one row to the Assessment Log Google Sheet. Tap a report to preview the PDF and send it from d1wakeforest@d1training.com.</div>
   <div style="width:100%;max-width:720px"><div class="reports"><button type="button" class="repbtn no-twscho" data-report="client"><b>Prescription</b><span>Client copy, no consult notes</span></button><button type="button" class="repbtn no-twscho" data-report="gm"><b>Prescription &middot; GM</b><span>Full copy with consult notes</span></button><button type="button" class="repbtn repIndex" data-report="index"><b>Performance Index</b><span>Scores, test results, coach tips</span></button></div></div>
   <button class="pillbtn" id="btnNew" type="button">Start new assessment &rarr;</button>
 </div></section>
 
 <nav class="bnav" aria-label="Sections"><div class="wrap" id="bnav"></div></nav>
 <div class="ov" id="pdfOverlay" hidden><div class="ovbar wrap"><h3 id="ovTitle">Report</h3><div class="pills"><button class="pillbtn" id="ovSend" type="button">Email</button><button class="pillbtn ghost" id="ovClose" type="button">Close</button></div></div><div class="ovscroll"><div class="paperwrap"><div class="paper" id="paper"></div></div></div></div>
+<div class="ov" id="pinGate" hidden><div class="wrap" style="margin:auto;max-width:420px;display:grid;gap:16px;justify-items:center;text-align:center;padding-block:40px">
+  <img src="data:image/png;base64,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" alt="D1 Training" style="width:96px">
+  <h1 style="font-size:34px">Staff Sign-In</h1><p class="hint" id="pinMsg" style="margin:0">Enter the staff PIN. You only do this once on this device.</p>
+  <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" placeholder="PIN" style="text-align:center;font-size:28px;letter-spacing:.3em;max-width:220px">
+  <button class="submit" id="pinGo" type="button" style="max-width:220px">Unlock</button></div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -646,23 +651,26 @@ function liveHTML(id){const t=S.tests[id]||{};if(t.g==="NT")return"";const low=i
  if(id==="cardio"&&t.machine)h+=`<span>${CARDIO[t.machine]}</span>`;
  if(id==="incrow"){const last=linkedHistory().filter(r=>r.vals.incrowSet).pop();if(last&&!t.setting)h+=`<span>Last bar setting: ${last.vals.incrowSet}</span>`}
  return h}
+function setHTML(el,h){if(el._h!==h){el._h=h;el.innerHTML=h}}
 const RX=[{v:"pt1",t:"D1 on 1 Personal Training",s:"Top tier · one coach, one athlete"},{v:"sg",t:"Small Group Training",s:"Semi-private coaching"},{v:"mem",t:"Membership",s:"Group classes"}];
 const rxSel=()=>(S.rx||[]).filter(v=>!(v==="mem"&&S.who==="member"));
 function renderRx(){const member=S.who==="member";const tier=S.mode==="adult"?"D1 Adult":tierNow();
- $("#rxBoard").innerHTML=RX.map((o,i)=>{const cur=o.v==="mem"&&member,on=rxSel().includes(o.v),locked=o.v==="mem"&&!member;
-  return `<button type="button" class="brow" data-rx="${o.v}" aria-pressed="${on}" ${cur?"disabled":""}><span class="n">${i+1}</span><span class="t">${o.t}<div class="s">${o.v==="mem"?(cur?"Already a member":tier+" "+o.s.toLowerCase()):o.s}</div></span>${cur?'<span class="tag gray">Current</span>':locked?'<span class="tag lock">Required</span>':i===0?'<span class="tag red">Top tier</span>':'<span></span>'}</button>`}).join("")}
+ setHTML($("#rxBoard"),RX.map((o,i)=>{const cur=o.v==="mem"&&member,on=rxSel().includes(o.v),locked=o.v==="mem"&&!member;
+  return `<button type="button" class="brow" data-rx="${o.v}" aria-pressed="${on}" ${cur?"disabled":""}><span class="n">${i+1}</span><span class="t">${o.t}<div class="s">${o.v==="mem"?(cur?"Already a member":tier+" "+o.s.toLowerCase()):o.s}</div></span>${cur?'<span class="tag gray">Current</span>':locked?'<span class="tag lock">Required</span>':i===0?'<span class="tag red">Top tier</span>':'<span></span>'}</button>`}).join(""))}
 function renderGroup(){
   const age=ageOf(), sug=suggestTier(age);
   const opts=S.mode==="scho"
     ?[{v:"Rookie",s:"Ages 7-11"},{v:"Devo",s:"Ages 12-14"},{v:"Prep",s:"Ages 15-18"}]
     :[{v:"D1 Adult",s:"Ages 18+"}];
-  $("#groupBoard").innerHTML=opts.map((o,i)=>`<button type="button" class="brow" data-group="${o.v}" aria-pressed="${S.single.group===o.v}"><span class="n">${i+1}</span><span class="t">${o.v}<div class="s">${o.s}</div></span>${sug===o.v?'<span class="tag">Suggested</span>':'<span></span>'}</button>`).join("");
+  setHTML($("#groupBoard"),opts.map((o,i)=>`<button type="button" class="brow" data-group="${o.v}" aria-pressed="${S.single.group===o.v}"><span class="n">${i+1}</span><span class="t">${o.v}<div class="s">${o.s}</div></span>${sug===o.v?'<span class="tag">Suggested</span>':'<span></span>'}</button>`).join(""));
 }
 function renderNav(){
   const pages=PAGES.filter(p=>!(p.id==="consult"&&S.who==="member"));
   document.querySelector(".bnav .wrap").style.setProperty("--tabs",pages.length);
   const lab=p=>p.id==="screen"&&isTW()?"Tests":p.id==="rx"&&isTW()&&S.mode==="scho"?"Review":p.label;
-  $("#bnav").innerHTML=pages.map(p=>`<button type="button" data-nav="${p.id}" ${p.id===page?'aria-current="page"':''}><span class="dot" aria-hidden="true"></span>${p.icon}${lab(p)}</button>`).join("");
+  const sig=pages.map(p=>p.id+":"+lab(p)).join("|"),nav=$("#bnav");
+  if(nav.dataset.sig!==sig){nav.dataset.sig=sig;nav.innerHTML=pages.map(p=>`<button type="button" data-nav="${p.id}"><span class="dot" aria-hidden="true"></span>${p.icon}${lab(p)}</button>`).join("")}
+  nav.querySelectorAll("button").forEach(b=>{if(b.dataset.nav===page)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   markNav();
 }
 
@@ -816,12 +824,15 @@ document.addEventListener("click",e=>{
 });
 $("#btnNext").onclick=()=>{const vis=visiblePages();const bad=checkPage(page,true);const nb=$(`#bnav [data-nav="${page}"]`);if(nb)nb._tried=true;if(bad)toast(bad+" item"+(bad>1?"s":"")+" still needed on this page");showPage(vis[vis.indexOf(page)+1])};
 $("#btnBack").onclick=()=>{const vis=visiblePages();showPage(vis[Math.max(0,vis.indexOf(page)-1)])};
-$("#btnSubmit").onclick=()=>{
+$("#btnSubmit").onclick=async()=>{
   const vis=visiblePages();let first=null,total=0;
   vis.forEach(p=>{const n=checkPage(p,true);total+=n;if(n&&!first)first=p;const nb=$(`#bnav [data-nav="${p}"]`);if(nb)nb._tried=true});
   markNav();
   if(total){showPage(first);toast(total+" required item"+(total>1?"s":"")+" missing");setTimeout(()=>{const f=document.querySelector(`.page[data-page="${first}"] .invalid`);if(f)f.scrollIntoView({block:"center"})},60);return}
   const name=[S.fields.first,S.fields.last].join(" ");
+  if(LIVE){const b=$("#btnSubmit"),lbl=b.textContent;b.disabled=true;b.textContent="Saving...";
+    try{await api("submit",{record:buildRecord()})}catch(e){b.disabled=false;b.textContent=lbl;if(e.message!=="PIN")toast("Not saved: "+e.message+". Check Wi-Fi and tap Submit again.");return}
+    b.disabled=false;b.textContent=lbl}
   $("#form").hidden=true;$(".bnav").hidden=true;$("#doneScreen").hidden=false;
     $("#doneTitle").textContent=isTW()?"Testing Week Saved":"Assessment Saved";if(isTW()){$("#doneText").textContent=name+" · "+(S.mode==="scho"?tierNow():"Adult")+" Testing Week · results saved to the athlete's history. Nothing is emailed until you tap send.";try{localStorage.removeItem(KEY)}catch(e){}window.scrollTo(0,0);return}
   $("#doneText").textContent=name+" · "+(S.mode==="scho"?"Scholastic":"Adult")+" "+(S.who==="member"?"member":"prospect")+" · Rx: "+rxLabels().join(" + ")+(S.strip.daysPerWeek?", "+S.strip.daysPerWeek+" days/week":"");
@@ -861,13 +872,14 @@ function athleteId(){const f=S.fields;if(!f.last||!f.first||!f.dob)return null;r
 function findMatch(){const f=S.fields;if(!f.last||!f.dob)return null;const hits=LOG.filter(r=>norm(r.last)===norm(f.last)&&r.dob===f.dob);if(!hits.length)return null;const id=hits[0].id;const rows=LOG.filter(r=>r.id===id).sort((a,b)=>a.date.localeCompare(b.date));return{id,rows,last:rows[rows.length-1]}}
 function linkedHistory(){return S.link?LOG.filter(r=>r.id===S.link).sort((a,b)=>a.date.localeCompare(b.date)):[]}
 const fmtD=d=>{const[y,m,dd]=d.split("-");return +m+"/"+(+dd)+"/"+y};
-function renderLookup(){const el=$("#lookup");if(!el)return;const m=findMatch();
+function renderLookup(){const el=$("#lookup");if(!el)return;if(typeof LIVE!=="undefined"&&LIVE){const f=S.fields;if(f.last&&f.dob&&norm(f.last)+"|"+f.dob!==lkKey){liveLookup();return}}const m=findMatch();
  if(S.link&&(!m||m.id!==S.link))S.link=null;
  if(m&&S.dismiss!==m.id){const r=m.last,linked=S.link===m.id;
-  el.innerHTML=`<div class="lk"><div class="top"><div><span class="tag">${linked?"Linked":"Returning athlete found"}</span></div><div class="ttl">${esc(r.first+" "+r.last)}</div><div class="meta">DOB ${fmtD(r.dob)} · ${m.rows.length} prior test${m.rows.length>1?"s":""} · last tested ${fmtD(r.date)} (${esc(r.type)}) with ${esc(r.coach)}</div><div class="id">ID ${esc(m.id)}</div></div>
-  <div class="bot">${linked?`<div class="ok"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L19 7"/></svg></i>Results will chart against ${fmtD(m.rows[0].date)}</div><button type="button" class="pillbtn ghost" data-lk="unlink">Unlink</button>`:`<button type="button" class="pillbtn" data-lk="use">Use this athlete &rarr;</button><button type="button" class="pillbtn ghost" data-lk="no">Not them</button>`}</div></div>`;return}
+  setHTML(el,`<div class="lk"><div class="top"><div><span class="tag">${linked?"Linked":"Returning athlete found"}</span></div><div class="ttl">${esc(r.first+" "+r.last)}</div><div class="meta">DOB ${fmtD(r.dob)} · ${m.rows.length} prior test${m.rows.length>1?"s":""} · last tested ${fmtD(r.date)} (${esc(r.type)}) with ${esc(r.coach)}</div><div class="id">ID ${esc(m.id)}</div></div>
+  <div class="bot">${linked?`<div class="ok"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L19 7"/></svg></i>Results will chart against ${fmtD(m.rows[0].date)}</div><button type="button" class="pillbtn ghost" data-lk="unlink">Unlink</button>`:`<button type="button" class="pillbtn" data-lk="use">Use this athlete &rarr;</button><button type="button" class="pillbtn ghost" data-lk="no">Not them</button>`}</div></div>`);return}
  const id=athleteId();
- el.innerHTML=id?`<div class="lknew"><span class="tag gray">New athlete</span><span>No earlier tests for this last name and birthday.${isTW()?" Today's results become the baseline.":""}</span></div><div class="id" style="color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:13px">ID ${esc(id)}</div>`:`<div class="hint">Enter last name and date of birth to check for earlier assessments.</div>`}
+ setHTML(el,id?`<div class="lknew"><span class="tag gray">New athlete</span><span>No earlier tests for this last name and birthday.${isTW()?" Today's results become the baseline.":""}</span></div><div class="id" style="color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:13px">ID ${esc(id)}</div>`:`<div class="hint">Enter last name and date of birth to check for earlier assessments.</div>`)}
+
 document.addEventListener("click",e=>{const b=e.target.closest("[data-lk]");if(!b)return;const m=findMatch();
  if(b.dataset.lk==="use"&&m){S.link=m.id;const lr=m.rows[m.rows.length-1];if(!S.single.sex)S.single.sex=lr.sex;toast("Linked. This assessment will chart against "+fmtD(m.rows[0].date))}
  if(b.dataset.lk==="no"&&m){S.dismiss=m.id;S.link=null}
@@ -1037,18 +1049,72 @@ function openReport(kind){ovDoc=kind;const p=$("#paper");
  $("#ovTitle").textContent=kind==="index"?"Athlete Performance Index":kind==="gm"?"Prescription · GM Copy":"Prescription · Client Copy";
  const to=S.mode==="scho"?S.fields.parentEmail:S.fields.email;
  $("#ovSend").textContent=kind==="gm"?"Send to GM":"Email to "+(S.mode==="scho"?"parent":"client");
- $("#ovSend").dataset.to=kind==="gm"?"Bryson Dodd (GM)":(to||"(no email on file)");
+ $("#ovSend").dataset.to=kind==="gm"?"Bryson Dodd (GM)":(to||"(no email on file)");$("#ovSend").dataset.label=$("#ovSend").textContent;sendArmed=false;
  $("#pdfOverlay").hidden=false;document.body.style.overflow="hidden";fitPaper()}
 function fitPaper(){const wrap=$(".paperwrap"),avail=Math.min(816,$(".ovscroll").clientWidth-32),s=avail/816;wrap.style.width=avail+"px";wrap.style.height=1056*s+"px";$("#paper").style.transform=`scale(${s})`}
 window.addEventListener("resize",()=>{if(!$("#pdfOverlay").hidden)fitPaper()});
 $("#ovClose").onclick=()=>{$("#pdfOverlay").hidden=true;document.body.style.overflow=""};
-$("#ovSend").onclick=e=>toast("Mockup: would send the PDF from d1wakeforest@d1training.com to "+e.currentTarget.dataset.to);
+$("#ovSend").onclick=e=>{const b=e.currentTarget;if(typeof LIVE!=="undefined"&&LIVE){liveSend(b);return}toast("Mockup: would send the PDF from d1wakeforest@d1training.com to "+b.dataset.to)};
 function paintReports(){$$(".repIndex").forEach(b=>{b.disabled=!indexAvailable();b.querySelector("span").textContent=S.mode==="adult"?"Adults get the Prescription only":isTW()?"Scores vs. earlier tests. The only report for scholastic Testing Week":"Scores, test results, coach tips"})}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-report]");if(b&&!b.disabled)openReport(b.dataset.report)});
 
+// ---------- live connection (Google Apps Script) ----------
+const API_URL="https://script.google.com/macros/s/AKfycbyWwOcI11wsVUxhpORbbQS2nVaX_4llGIk0WWc3-TzVlB3VwNChwp-X_mA-X6nSMqOI/exec";
+const DEMO=(()=>{try{return /[?&]demo\b/.test(location.search)}catch(e){return false}})();
+const LIVE=/^https:\/\/script\.google\.com\//.test(API_URL)&&!DEMO;
+let PIN=(()=>{try{return localStorage.getItem("d1wf-pin")||""}catch(e){return""}})();
+async function api(action,data){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action,pin:PIN},data||{}))});
+  const j=await r.json();
+  if(!j.ok&&j.error==="PIN"){PIN="";try{localStorage.removeItem("d1wf-pin")}catch(e){}showPin("That PIN didn't work. Try again.");throw new Error("PIN")}
+  if(!j.ok)throw new Error(j.error||"Something went wrong");return j}
+function showPin(msg){$("#pinGate").hidden=false;if(msg)$("#pinMsg").textContent=msg;setTimeout(()=>$("#pinInput").focus(),50)}
+$("#pinGo").onclick=async()=>{const v=$("#pinInput").value.trim();if(!v)return;PIN=v;$("#pinGo").textContent="Checking...";
+  try{const j=await api("ping");try{localStorage.setItem("d1wf-pin",PIN)}catch(e){}if(j.ranges)Object.assign(RANGES,j.ranges);$("#pinGate").hidden=true;$("#pinInput").value="";toast("Unlocked")}
+  catch(e){if(e.message!=="PIN")$("#pinMsg").textContent="Couldn't reach the server. Check Wi-Fi and try again."}
+  finally{$("#pinGo").textContent="Unlock"}};
+$("#pinInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("#pinGo").click()});
+// athlete history lookup
+let lkKey="",lkBusy=false;
+function liveLookup(){if(!LIVE)return;const f=S.fields;if(!f.last||!f.dob)return;const k=norm(f.last)+"|"+f.dob;if(k===lkKey||lkBusy)return;lkBusy=true;
+  const el=$("#lookup");if(el)setHTML(el,'<div class="hint">Checking for earlier tests...</div>');
+  api("lookup",{last:f.last,dob:f.dob}).then(j=>{LOG.length=0;(j.rows||[]).forEach(r=>LOG.push(r));lkKey=k}).catch(()=>{lkKey=""}).finally(()=>{lkBusy=false;paint()})}
+function buildRecord(){const f=S.fields,scho=S.mode==="scho",tw=isTW(),rs=rxSel();const t={};
+  testList().forEach(x=>{const d=S.tests[x.id]||{};if(d.g==="NT")return;if(x.id==="cardio"){const c=toSec(d.time);if(d.machine&&c!=null){t.cardioMachine=d.machine;t.cardioSec=c}return}const v=rawVal(x.id);if(v!=null)t[x.id]=v;if(x.id==="incrow"&&d.setting)t.incrowSet=d.setting});
+  let sc={};if(scho){const ix=computeIndex();const g=c=>ix.cats.find(z=>z.c===c).score;sc={saq:g("SAQ"),power:g("Power"),strength:g("Strength"),overall:ix.overall}}
+  const hasRx=!(tw&&scho);const ft=parseFloat(f.heightFt),inch=parseFloat(f.heightIn||0);
+  return Object.assign({athleteId:S.link||athleteId(),type:S.type,program:scho?"Scholastic":"Adult",who:S.who==="member"?"Member":"Prospect",tier:scho?tierNow():"Adult",
+    first:f.first,last:f.last,dob:f.dob,age:ageOf(),sex:S.single.sex,mindbodyId:f.mindbodyId,coach:f.coach,recruiter:S.who==="prospect"?f.recruiter:"",
+    phone:scho?"":f.phone,email:scho?"":f.email,parentName:scho?f.parentName:"",parentPhone:scho?f.parentPhone:"",parentEmail:scho?f.parentEmail:"",
+    school:scho&&!tw?f.school:"",grade:scho&&!tw?f.grade:"",sports:scho&&!tw?(S.sports||[]).join(", "):"",level:scho&&!tw?S.single.level:"",
+    heightIn:isNaN(ft)?"":ft*12+(isNaN(inch)?0:inch),weight:f.weight,bodyFat:S.switches.inbody?f.bodyFat:"",smm:S.switches.inbody?f.smm:"",inbodyScore:S.switches.inbody?f.inbodyScore:"",
+    injuries:(S.injuries||[]).join(", "),injuryDetail:f.injuryDetail,tests:t,
+    rxPlan:hasRx?rxLabels().join(" + "):"",ptPack:hasRx&&rs.includes("pt1")?S.single.ptPack:"",sgPack:hasRx&&rs.includes("sg")?S.single.sgPack:"",memProgram:hasRx&&rs.includes("mem")?S.single.group:"",
+    daysPerWeek:hasRx?S.strip.daysPerWeek:"",nutrition:hasRx?S.single.nutrition:"",ptWhy:hasRx?f.ptWhy:"",
+    goals:(S.goals||[]).join(", "),source:S.who==="prospect"?f.source:"",importance:S.who==="prospect"?S.strip.importance:"",verbalYes:S.who==="prospect"?(S.switches.verbalYes?"Yes":"No"):"",notes:f.notes,full:S},sc)}
+// PDF from the on-screen paper
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("Couldn't load the PDF tools. Check Wi-Fi."));document.head.appendChild(s)})}
+async function paperPdf(){
+  if(!window.html2canvas)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+  if(!window.jspdf)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+  const clone=$("#paper").cloneNode(true);clone.id="paperClone";clone.style.cssText="position:fixed;left:-10000px;top:0;transform:none";document.body.appendChild(clone);
+  try{if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const canvas=await html2canvas(clone,{scale:2,backgroundColor:"#ffffff",logging:false});
+    const pdf=new window.jspdf.jsPDF({unit:"pt",format:"letter"});pdf.addImage(canvas.toDataURL("image/jpeg",0.9),"JPEG",0,0,612,792);
+    return pdf.output("datauristring")}finally{clone.remove()}}
+let sendArmed=false;
+async function liveSend(btn){const to=btn.dataset.to;
+  if(!sendArmed){sendArmed=true;btn.textContent=ovDoc==="gm"?"Tap again to send to GM":"Tap again to send";setTimeout(()=>{if(sendArmed){sendArmed=false;btn.textContent=btn.dataset.label}},4000);return}
+  sendArmed=false;btn.disabled=true;btn.textContent="Sending...";
+  try{const pdf=await paperPdf();const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    const j=await api("send",{kind:ovDoc,to:ovDoc==="gm"?"":to,pdf,filename:`D1_${ovDoc==="index"?"Performance_Index":ovDoc==="gm"?"Prescription_GM":"Prescription"}_${norm(S.fields.last)}_${norm(S.fields.first)}_${ds}.pdf`,name:fullName(),first:S.fields.first||"",coach:S.fields.coach||""});
+    toast("Sent to "+j.to+". A copy is saved in Google Drive.")}
+  catch(e){if(e.message!=="PIN")toast("Not sent: "+e.message)}
+  finally{btn.disabled=false;btn.textContent=btn.dataset.label}}
 // ---------- boot ----------
-try{if(/[?&]demo\b/.test(location.search))$("#btnExample").hidden=false}catch(e){}
 try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.S){S=Object.assign(blank(),d.S);page=d.page||"info";$("#saved").textContent="Draft restored from "+new Date(d.at).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}}catch(e){}
+$("#btnExample").hidden=!DEMO;
+if(LIVE){LOG.length=0;$("#mockNote").hidden=true;if(!PIN)showPin();else api("ping").then(j=>{if(j.ranges)Object.assign(RANGES,j.ranges)}).catch(()=>{})}
 renderTests();paint();
 })();
 </script>
